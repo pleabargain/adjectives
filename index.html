@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adjectives with Dennis Daniels, English Teacher</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  .word {
+    position: absolute;
+    font-size: 12pt;
+    white-space: nowrap;
+  }
+  #controlWrapper {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+  }
+  button {
+    margin-left: 10px;
+  }
+</style>
+</head>
+<body>
+  <h1><center>Adjectives with Dennis Daniels, English Teacher</center></h1>
+  <h2><center>What does X mean?</center></h2>
+<div id="controlWrapper">
+  <label for="speedControl">Speed Control:</label>
+  <input type="range" id="speedControl" min="10" max="200" value="100">
+  <button id="pauseButton">Pause</button>
+  <button id="clearButton">Clear</button>
+</div>
+
+<script>
+  const words = [
+
+  "adventurous",
+  "beautiful",
+  "charismatic",
+  "dedicated",
+  "enthusiastic",
+  "faithful",
+  "generous",
+  "heroic",
+  "innovative",
+  "joyful",
+  "kind-hearted",
+  "luminous",
+  "magnificent",
+  "noble",
+  "abundant",
+  "brave",
+  "creative",
+  "diligent",
+  "elegant",
+  "alert",
+  "bustling",
+  "candid",
+  "dynamic",
+  "earnest",
+  "fanciful",
+  "gallant",
+  "hearty",
+  "intuitive",
+  "jubilant",
+  "keen",
+  "lavish",
+  "mighty",
+  "nurturing",
+  "observant",
+  "plucky",
+  "reliable",
+  "sturdy",
+  "thrifty",
+  "undaunted",
+  "valiant",
+  "whimsical",
+  "expressive",
+  "zany",
+  "affable",
+  "benevolent",
+  "cultured",
+  "devoted",
+  "enlightened",
+  "flamboyant",
+  "gregarious",
+  "humorous",
+  "impeccable",
+  "jaunty",
+  "knack",
+  "learned",
+  "masterful",
+  "nostalgic",
+  "opulent",
+  "philosophical",
+  "quintessential",
+  "radiant",
+  "sophisticated",
+  "tranquil",
+  "unassuming",
+  "venerable",
+  "wistful",
+  "expansive",
+  "yearning",
+  "zealful",
+  "fearless",
+  "graceful",
+  "honest",
+  "inspiring",
+  "jovial",
+  "knowledgeable",
+  "logical",
+  "mystical",
+  "novel",
+  "original",
+  "passionate",
+  "quirky",
+  "robust",
+  "savvy",
+  "tenacious",
+  "unique",
+  "versatile",
+  "warmhearted",
+  "exotic",
+  "youthful",
+  "zesty",
+  "optimistic",
+  "profound",
+  "quirky",
+  "resilient",
+  "sincere",
+  "thoughtful",
+  "upbeat",
+  "vivacious",
+  "witty",
+  "exuberant",
+  "youthful",
+  "zealous",
+
+];
+  const minFontSize = 20; // minimum font size in pixels
+  const visibleTime = 3000; // time a word stays on screen in milliseconds
+  let speedFactor = 40; // initial speed factor
+  let timeout; // Store the timeout for later clearance
+  let paused = false; // State of animation
+
+  // Function to create a word element and animate it
+  function createWord() {
+    const word = document.createElement('div');
+    word.classList.add('word');
+    word.textContent = words[Math.floor(Math.random() * words.length)];
+    document.body.appendChild(word);
+    
+    let computedStyle = getComputedStyle(word);
+    word.style.top = `${Math.random() * (window.innerHeight - parseInt(computedStyle.fontSize))}px`;
+    word.style.left = `-${word.offsetWidth}px`;
+
+    const totalWidth = window.innerWidth + word.offsetWidth;
+    const duration = (totalWidth / speedFactor) * 1000;
+
+    word.animate([
+      { transform: 'translateX(0px)' },
+      { transform: `translateX(${totalWidth}px)` }
+    ], {
+      duration: duration,
+      easing: 'linear'
+    }).onfinish = () => word.remove();
+  }
+
+  function updateSpeed() {
+    const speedControl = document.getElementById('speedControl');
+    speedFactor = Number(speedControl.value);
+  }
+
+  document.getElementById('speedControl').addEventListener('input', updateSpeed);
+
+  function startAnimation() {
+    if (!paused) {
+      createWord();
+      timeout = setTimeout(startAnimation, Math.random() * 2000 + visibleTime);
+    }
+  }
+
+  // Pause or resume animations
+  function togglePause() {
+    paused = !paused;
+    document.getElementById('pauseButton').textContent = paused ? 'Resume' : 'Pause';
+    if (paused) {
+      clearTimeout(timeout);
+      document.querySelectorAll('.word').forEach(word => {
+        const animations = word.getAnimations();
+        animations.forEach(animation => animation.pause());
+      });
+    } else {
+      document.querySelectorAll('.word').forEach(word => {
+        const animations = word.getAnimations();
+        animations.forEach(animation => animation.play());
+      });
+      startAnimation();
+    }
+  }
+
+  // Clear all words and animations
+  function clearWords() {
+    clearTimeout(timeout);
+    document.querySelectorAll('.word').forEach(word => {
+      const animations = word.getAnimations();
+      animations.forEach(animation => animation.cancel());
+      word.remove();
+    });
+  }
+
+  // Event listeners for buttons
+  document.getElementById('pauseButton').addEventListener('click', togglePause);
+  document.getElementById('clearButton').addEventListener('click', clearWords);
+
+  // Start initial animation
+  startAnimation();
+</script>
+</body>
+</html>
